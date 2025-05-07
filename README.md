@@ -1,24 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SkripsiA - AI Chatbot Frontend
+
+This is the frontend application for an AI chatbot thesis project. It features user authentication, admin knowledge management (RAG), and a student chat interface.
+
+## Features
+
+- **Authentication System**
+  - Login/Register functionality
+  - Role-based access (Admin/Student)
+
+- **Admin Dashboard**
+  - Knowledge management (upload text, PDF/images, voice files)
+  - Knowledge base viewing
+
+- **Student Chat Interface**
+  - Chat with AI assistant
+  - Text input
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd skripsia-fe
+```
+
+2. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Create a `.env.local` file in the root directory with the following content:
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+Adjust the URL to point to your backend API server.
+
+4. Start the development server
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Backend API Endpoints
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application uses the following API endpoints:
+
+### Authentication
+- `POST /auth/register` - Register a new user
+- `POST /auth/token` - Login and get access token
+- `GET /users/me` - Get current user information
+
+### Knowledge Management
+- `POST /knowledge/upload` - Upload knowledge (text, file, voice)
+- `GET /knowledge` - Get list of all knowledge entries
+
+### Chat
+- `POST /chat/send` - Send a message to the AI
+- `GET /chat/conversations/:id` - Get conversation by ID
+
+## Folder Structure
+
+- `src/app` - Next.js app router pages
+- `src/components` - React components
+  - `auth` - Authentication components
+  - `admin` - Admin-specific components
+  - `chat` - Chat interface components
+  - `ui` - Reusable UI components
+- `src/lib` - Utility functions and services
+  - `auth.tsx` - Authentication context
+  - `chat.ts` - Chat-related API services
+  - `utils.ts` - Utility functions
+
+## Technology Stack
+
+- React.js
+- Next.js
+- TypeScript
+- Tailwind CSS
 
 ## Learn More
 
