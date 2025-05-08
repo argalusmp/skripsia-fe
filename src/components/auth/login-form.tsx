@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth'
 
 export function LoginForm() {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -18,7 +18,7 @@ export function LoginForm() {
     setError(null)
 
     try {
-      await login(email, password)
+      await login(username, password)
       router.push('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
@@ -32,7 +32,7 @@ export function LoginForm() {
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold">Login to Your Account</h1>
         <p className="text-sm text-muted-foreground mt-2">
-          Enter your email and password to login
+          Enter your username and password to login
         </p>
       </div>
 
@@ -44,15 +44,15 @@ export function LoginForm() {
         )}
         
         <div className="space-y-2">
-          <label htmlFor="email" className="text-sm font-medium">
-            Email
+          <label htmlFor="username" className="text-sm font-medium">
+            Username
           </label>
           <Input
-            id="email"
-            type="email" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
+            id="username"
+            type="text" 
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter your username"
             required
           />
         </div>

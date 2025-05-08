@@ -1,17 +1,19 @@
+'use client'
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { API_BASE_URL, handleApiResponse } from './utils'
 
 type User = {
-  id: string
+  id: number
   username: string
   email: string
   role: 'admin' | 'student'
+  created_at?: string
 }
 
 type AuthContextType = {
   user: User | null
   isLoading: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (username: string, password: string) => Promise<void>
   register: (username: string, email: string, password: string, role: 'admin' | 'student') => Promise<void>
   logout: () => void
   error: string | null
@@ -57,31 +59,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth()
   }, [])
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     setIsLoading(true)
     setError(null)
     
     try {
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
+
       const response = await fetch(`${API_BASE_URL}/auth/token`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({ email, password }),
+        body: formData.toString(),
       })
       
       const data = await handleApiResponse(response)
       localStorage.setItem('token', data.access_token)
       
-      // Fetch user data
-      const userResponse = await fetch(`${API_BASE_URL}/users/me`, {
-        headers: {
-          Authorization: `Bearer ${data.access_token}`,
-        },
+      // Set user data from token response
+      setUser({
+        id: data.user_id,
+        username: data.username,
+        email: '', // Email tidak tersedia di response token
+        role: data.role
       })
-      
-      const userData = await handleApiResponse(userResponse)
-      setUser(userData)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
       throw err
@@ -103,7 +107,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ username, email, password, role }),
       })
       
-      await handleApiResponse(response)
+      const data = await handleApiResponse(response)
+      // Login otomatis setelah register berhasil
+      localStorage.setItem('token', data.access_token)
+      
+      setUser({
+        id: data.user_id,
+        username: data.username,
+        email: email,
+        role: data.role
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed')
       throw err

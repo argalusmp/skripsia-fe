@@ -1,22 +1,26 @@
 import { API_BASE_URL, getAuthHeader, handleApiResponse } from './utils'
 
 export type Message = {
-  id?: string
+  id?: number
   role: 'user' | 'assistant'
   content: string
-  timestamp: string
-  conversationId?: string
+  created_at: string
 }
 
 export type Conversation = {
-  id: string
+  id: number
   title: string
-  createdAt: string
-  updatedAt: string
-  messages: Message[]
+  created_at: string
+  updated_at: string
+  messages?: Message[]
 }
 
-export async function sendMessage(content: string, conversationId?: string): Promise<Message> {
+export type ConversationsResponse = {
+  items: Conversation[]
+  total: number
+}
+
+export async function sendMessage(message: string, conversation_id?: number): Promise<{message: Message, conversation_id: number}> {
   const headers = {
     'Content-Type': 'application/json',
     ...getAuthHeader() as Record<string, string>
@@ -26,18 +30,39 @@ export async function sendMessage(content: string, conversationId?: string): Pro
     method: 'POST',
     headers,
     body: JSON.stringify({
-      content,
-      conversationId
+      message,
+      conversation_id
     }),
   })
 
   return handleApiResponse(response)
 }
 
-export async function getConversation(conversationId: string): Promise<Conversation> {
+export async function getConversations(skip: number = 0, limit: number = 10): Promise<Conversation[]> {
   const headers = getAuthHeader() as Record<string, string>
 
-  const response = await fetch(`${API_BASE_URL}/chat/conversations/${conversationId}`, {
+  const response = await fetch(`${API_BASE_URL}/chat/conversations?skip=${skip}&limit=${limit}`, {
+    headers,
+  })
+
+  return handleApiResponse(response)
+}
+
+export async function getConversation(conversation_id: number): Promise<Conversation> {
+  const headers = getAuthHeader() as Record<string, string>
+
+  const response = await fetch(`${API_BASE_URL}/chat/conversations/${conversation_id}`, {
+    headers,
+  })
+
+  return handleApiResponse(response)
+}
+
+export async function deleteConversation(conversation_id: number): Promise<{detail: string}> {
+  const headers = getAuthHeader() as Record<string, string>
+
+  const response = await fetch(`${API_BASE_URL}/chat/conversations/${conversation_id}`, {
+    method: 'DELETE',
     headers,
   })
 

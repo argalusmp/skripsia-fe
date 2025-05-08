@@ -4,23 +4,46 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Copy, Download, ThumbsUp, ThumbsDown, Send } from 'lucide-react'
+import { Copy, Download, ThumbsUp, ThumbsDown, Send, Trash } from 'lucide-react'
 import { cn } from "@/lib/utils"
-import { Message, sendMessage } from "@/lib/chat"
+import { Message, sendMessage, getConversation, deleteConversation } from "@/lib/chat"
 import { useAuth } from "@/lib/auth"
 
-export default function ChatInterface({ conversationId }: { conversationId?: string }) {
+export default function ChatInterface({ conversation_id }: { conversation_id?: number }) {
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
       content: "Hello! I'm your AI assistant. How may I help you today?",
-      timestamp: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     }
   ])
   const [isLoading, setIsLoading] = useState(false)
+  const [currentConversationId, setCurrentConversationId] = useState<number | undefined>(conversation_id)
   const { user } = useAuth()
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+
+  // Fetch conversation if conversation_id is provided
+  useEffect(() => {
+    if (conversation_id) {
+      const fetchConversation = async () => {
+        try {
+          setIsLoading(true)
+          const conversation = await getConversation(conversation_id)
+          if (conversation.messages) {
+            setMessages(conversation.messages)
+            setCurrentConversationId(conversation_id)
+          }
+        } catch (error) {
+          console.error("Error fetching conversation:", error)
+        } finally {
+          setIsLoading(false)
+        }
+      }
+      
+      fetchConversation()
+    }
+  }, [conversation_id])
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -35,7 +58,7 @@ export default function ChatInterface({ conversationId }: { conversationId?: str
     const userMessage: Message = {
       role: "user",
       content: input,
-      timestamp: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     }
     
     setMessages(prev => [...prev, userMessage])
@@ -43,14 +66,18 @@ export default function ChatInterface({ conversationId }: { conversationId?: str
     setIsLoading(true)
     
     try {
-      const response = await sendMessage(input, conversationId)
+      const response = await sendMessage(input, currentConversationId)
+      
+      // Update conversation ID if this is a new conversation
+      if (response.conversation_id && (!currentConversationId || currentConversationId !== response.conversation_id)) {
+        setCurrentConversationId(response.conversation_id)
+      }
       
       const assistantMessage: Message = {
         role: "assistant",
-        content: response.content,
-        timestamp: response.timestamp || new Date().toISOString(),
-        id: response.id,
-        conversationId: response.conversationId
+        content: response.message.content,
+        created_at: response.message.created_at,
+        id: response.message.id
       }
       
       setMessages(prev => [...prev, assistantMessage])
@@ -63,9 +90,29 @@ export default function ChatInterface({ conversationId }: { conversationId?: str
         {
           role: "assistant",
           content: "Sorry, there was an error processing your request. Please try again.",
-          timestamp: new Date().toISOString(),
+          created_at: new Date().toISOString(),
         }
       ])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleDeleteConversation = async () => {
+    if (!currentConversationId || isLoading) return
+    
+    try {
+      setIsLoading(true)
+      await deleteConversation(currentConversationId)
+      // Reset conversation
+      setMessages([{
+        role: "assistant",
+        content: "Conversation has been deleted. How may I help you today?",
+        created_at: new Date().toISOString(),
+      }])
+      setCurrentConversationId(undefined)
+    } catch (error) {
+      console.error("Error deleting conversation:", error)
     } finally {
       setIsLoading(false)
     }
@@ -86,9 +133,38 @@ export default function ChatInterface({ conversationId }: { conversationId?: str
     })
   }
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        alert('Copied to clipboard!')
+      })
+      .catch(err => {
+        console.error('Could not copy text: ', err)
+      })
+  }
+
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-64px)]">
-      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef as any}>
+    <div className="flex-1 flex flex-col h-screen">
+      <div className="flex items-center justify-between p-4 border-b">
+        <h2 className="text-lg font-medium">
+          {/* {currentConversationId ? `Conversation #${currentConversationId}` : 'New Conversation'} */}
+          {currentConversationId ? `Ongoing Conversation` : 'New Conversation'}
+          
+        </h2>
+        {currentConversationId && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleDeleteConversation}
+            disabled={isLoading}
+            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+          >
+            <Trash className="h-4 w-4 mr-2" />
+            Delete Conversation
+          </Button>
+        )}
+      </div>
+      <ScrollArea className="flex-1 p-4 overflow-y-auto" ref={scrollAreaRef as any}>
         <div className="space-y-4 max-w-3xl mx-auto">
           {messages.map((message, index) => (
             <div
@@ -107,7 +183,7 @@ export default function ChatInterface({ conversationId }: { conversationId?: str
                     {message.role === "assistant" ? "AI Assistant" : user?.username || "You"}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {formatTimestamp(message.timestamp)}
+                    {formatTimestamp(message.created_at)}
                   </span>
                 </div>
                 <div className={cn(
@@ -120,17 +196,14 @@ export default function ChatInterface({ conversationId }: { conversationId?: str
                 </div>
                 {message.role === "assistant" && (
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Copy to clipboard">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8" 
+                      title="Copy to clipboard"
+                      onClick={() => copyToClipboard(message.content)}
+                    >
                       <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Download response">
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Helpful">
-                      <ThumbsUp className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Not helpful">
-                      <ThumbsDown className="h-4 w-4" />
                     </Button>
                   </div>
                 )}
@@ -157,7 +230,7 @@ export default function ChatInterface({ conversationId }: { conversationId?: str
           )}
         </div>
       </ScrollArea>
-      <div className="p-4 border-t bg-background">
+      <div className="p-4 border-t bg-background sticky bottom-0">
         <div className="flex gap-2 max-w-3xl mx-auto">
           <Textarea
             placeholder="Type your message here..."
