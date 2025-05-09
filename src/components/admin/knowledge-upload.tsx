@@ -25,7 +25,7 @@ export function KnowledgeUpload() {
         setFileType('document')
       } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
         setFileType('image')
-      } else if (['mp3', 'wav', 'ogg'].includes(fileExtension)) {
+      } else if (['mp3', 'wav', 'm4a'].includes(fileExtension)) {
         setFileType('audio')
       }
     }
@@ -108,13 +108,13 @@ export function KnowledgeUpload() {
 
         <div>
           <label htmlFor="file" className="block text-sm font-medium mb-1">
-            Upload File (PDF, DOCX, JPG, PNG, MP3, WAV)
+            Upload File (PDF, DOCX, JPG, PNG, MP3, WAV, M4A)
           </label>
           <Input
             id="file"
             type="file"
             onChange={handleFileChange}
-            accept=".pdf,.docx,.jpg,.jpeg,.png,.mp3,.wav,.ogg"
+            accept=".pdf,.docx,.jpg,.jpeg,.png,.mp3,.wav,.ogg,.m4a"
             required
           />
           {file && (
