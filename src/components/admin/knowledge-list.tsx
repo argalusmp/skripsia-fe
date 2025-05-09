@@ -78,18 +78,18 @@ export function KnowledgeList() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'processing':
-        return <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs">Processing</span>
+        return <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 rounded-full text-xs">Processing</span>
       case 'completed':
-        return <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Completed</span>
+        return <span className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-full text-xs">Completed</span>
       case 'failed':
-        return <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs">Failed</span>
+        return <span className="px-2 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-full text-xs">Failed</span>
       default:
-        return <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">{status}</span>
+        return <span className="px-2 py-1 bg-muted text-muted-foreground rounded-full text-xs">{status}</span>
     }
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
+    <div className="p-6 bg-card text-card-foreground rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">Knowledge Base</h2>
         <Button onClick={fetchKnowledgeItems} disabled={isLoading}>
@@ -98,13 +98,13 @@ export function KnowledgeList() {
       </div>
 
       {error && (
-        <div className="mb-4 p-4 bg-red-50 text-red-500 rounded-md">
+        <div className="mb-4 p-4 bg-destructive/10 text-destructive rounded-md">
           {error}
         </div>
       )}
 
       {isLoading ? (
-        <div className="text-center py-8">Loading knowledge items...</div>
+        <div className="text-center py-8 text-foreground">Loading knowledge items...</div>
       ) : knowledgeItems.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           No knowledge items found. Add some using the form above.
@@ -114,13 +114,13 @@ export function KnowledgeList() {
           {knowledgeItems.map((item) => (
             <div 
               key={item.id} 
-              className="border rounded-lg p-4 hover:bg-slate-50 transition-colors"
+              className="border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3">
                   <div className="text-2xl">{getTypeIcon(item.file_type)}</div>
                   <div>
-                    <h3 className="font-medium">{item.title}</h3>
+                    <h3 className="font-medium text-foreground">{item.title}</h3>
                     <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
                       <span>Type: {item.file_type}</span>
                       <span>Created: {formatDate(item.created_at)}</span>
@@ -143,7 +143,7 @@ export function KnowledgeList() {
           >
             Previous
           </Button>
-          <span className="text-sm">
+          <span className="text-sm text-foreground">
             Page {page + 1} of {Math.ceil(total / limit)}
           </span>
           <Button 

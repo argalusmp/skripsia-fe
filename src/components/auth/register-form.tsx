@@ -37,36 +37,30 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold">Create an Account</h1>
-        <p className="text-sm text-muted-foreground mt-2">
-          Fill in the details to create your account
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div>
+      <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
-          <div className="bg-red-50 text-red-500 px-4 py-2 rounded-md text-sm">
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm border border-red-200 dark:border-red-800">
             {error}
           </div>
         )}
         
         <div className="space-y-2">
-          <label htmlFor="username" className="text-sm font-medium">
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Username
           </label>
           <Input
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter your username"
+            placeholder="Choose a username"
+            className="w-full"
             required
           />
         </div>
         
         <div className="space-y-2">
-          <label htmlFor="email" className="text-sm font-medium">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Email
           </label>
           <Input
@@ -74,13 +68,14 @@ export function RegisterForm() {
             type="email" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
+            placeholder="Enter your email address"
+            className="w-full"
             required
           />
         </div>
         
         <div className="space-y-2">
-          <label htmlFor="password" className="text-sm font-medium">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Password
           </label>
           <Input
@@ -88,13 +83,14 @@ export function RegisterForm() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
+            placeholder="Create a password"
+            className="w-full"
             required
           />
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="confirmPassword" className="text-sm font-medium">
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Confirm Password
           </label>
           <Input
@@ -103,41 +99,43 @@ export function RegisterForm() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Confirm your password"
+            className="w-full"
             required
           />
         </div>
-
         <div className="space-y-2">
-          <label className="text-sm font-medium">Role</label>
-          <div className="flex gap-4">
-            <label className="flex items-center space-x-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Select your role
+          </label>
+          <div className="flex gap-4 mt-2">
+            <label className="inline-flex items-center">
               <input
                 type="radio"
                 name="role"
                 value="student"
                 checked={role === 'student'}
                 onChange={() => setRole('student')}
-                className="h-4 w-4"
+                className="h-4 w-4 text-blue-600 dark:text-blue-500 border-gray-300 dark:border-gray-700 focus:ring-blue-500 dark:focus:ring-blue-400"
               />
-              <span>Student</span>
+              <span className="ml-2 text-gray-700 dark:text-gray-300">Student</span>
             </label>
-            <label className="flex items-center space-x-2">
+            <label className="inline-flex items-center">
               <input
                 type="radio"
                 name="role"
                 value="admin"
                 checked={role === 'admin'}
                 onChange={() => setRole('admin')}
-                className="h-4 w-4"
+                className="h-4 w-4 text-blue-600 dark:text-blue-500 border-gray-300 dark:border-gray-700 focus:ring-blue-500 dark:focus:ring-blue-400"
               />
-              <span>Admin</span>
+              <span className="ml-2 text-gray-700 dark:text-gray-300">Admin</span>
             </label>
           </div>
         </div>
 
         <Button 
           type="submit" 
-          className="w-full" 
+          className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm"
           disabled={isLoading}
         >
           {isLoading ? 'Creating account...' : 'Create Account'}

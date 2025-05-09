@@ -28,23 +28,16 @@ export function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold">Login to Your Account</h1>
-        <p className="text-sm text-muted-foreground mt-2">
-          Enter your username and password to login
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div>
+      <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
-          <div className="bg-red-50 text-red-500 px-4 py-2 rounded-md text-sm">
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm border border-red-200 dark:border-red-800">
             {error}
           </div>
         )}
         
         <div className="space-y-2">
-          <label htmlFor="username" className="text-sm font-medium">
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Username
           </label>
           <Input
@@ -53,30 +46,37 @@ export function LoginForm() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your username"
+            className="w-full"
             required
           />
         </div>
         
         <div className="space-y-2">
-          <label htmlFor="password" className="text-sm font-medium">
-            Password
-          </label>
+          <div className="flex items-center justify-between">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Password
+            </label>
+            <a href="#" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+              Forgot password?
+            </a>
+          </div>
           <Input
             id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
+            className="w-full"
             required
           />
         </div>
 
         <Button 
           type="submit" 
-          className="w-full" 
+          className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm"
           disabled={isLoading}
         >
-          {isLoading ? 'Logging in...' : 'Login'}
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </Button>
       </form>
     </div>

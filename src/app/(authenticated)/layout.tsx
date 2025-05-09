@@ -25,7 +25,7 @@ export default function AuthenticatedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-background">
       <Navigation />
       <main className="pb-10">{children}</main>
     </div>

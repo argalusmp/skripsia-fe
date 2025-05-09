@@ -77,24 +77,24 @@ export function KnowledgeUpload() {
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
+    <div className="p-6 bg-card text-card-foreground rounded-lg shadow-md">
       <h2 className="text-xl font-bold mb-6">Upload Knowledge</h2>
 
       {error && (
-        <div className="mb-4 p-4 bg-red-50 text-red-500 rounded-md">
+        <div className="mb-4 p-4 bg-destructive/10 text-destructive rounded-md">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 p-4 bg-green-50 text-green-500 rounded-md">
+        <div className="mb-4 p-4 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-md">
           {success}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium mb-1">
+          <label htmlFor="title" className="block text-sm font-medium mb-1 text-foreground">
             Title
           </label>
           <Input
@@ -107,7 +107,7 @@ export function KnowledgeUpload() {
         </div>
 
         <div>
-          <label htmlFor="file" className="block text-sm font-medium mb-1">
+          <label htmlFor="file" className="block text-sm font-medium mb-1 text-foreground">
             Upload File (PDF, DOCX, JPG, PNG, MP3, WAV, M4A)
           </label>
           <Input
@@ -118,7 +118,7 @@ export function KnowledgeUpload() {
             required
           />
           {file && (
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-muted-foreground">
               Selected file: {file.name} ({(file.size / 1024).toFixed(2)} KB)
             </p>
           )}

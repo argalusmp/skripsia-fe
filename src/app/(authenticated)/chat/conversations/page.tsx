@@ -62,7 +62,7 @@ export default function ConversationsPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Your Conversations</h1>
+        <h1 className="text-2xl font-bold text-foreground">Your Conversations</h1>
         <div className="space-x-4">
           <Button onClick={fetchConversations} disabled={isLoading} variant="outline">
             Refresh
@@ -74,15 +74,15 @@ export default function ConversationsPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-500 p-4 rounded-md mb-6">
+        <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">
           {error}
         </div>
       )}
 
       {isLoading ? (
-        <div className="text-center py-12">Loading conversations...</div>
+        <div className="text-center py-12 text-foreground">Loading conversations...</div>
       ) : conversations.length === 0 ? (
-        <div className="text-center py-12 bg-slate-50 rounded-lg">
+        <div className="text-center py-12 bg-muted rounded-lg">
           <p className="text-muted-foreground">You don't have any conversations yet.</p>
           <Link href="/chat" className="mt-4 inline-block">
             <Button>Start Your First Conversation</Button>
@@ -93,7 +93,7 @@ export default function ConversationsPage() {
           {conversations.map(conversation => (
             <div 
               key={conversation.id} 
-              className="border p-4 rounded-lg hover:bg-slate-50 transition-colors flex justify-between items-center"
+              className="border p-4 rounded-lg hover:bg-accent/50 transition-colors flex justify-between items-center"
             >
               <div>
                 <Link 
@@ -111,7 +111,7 @@ export default function ConversationsPage() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                className="text-destructive hover:text-destructive hover:bg-destructive/10"
                 onClick={() => handleDeleteConversation(conversation.id)}
               >
                 <Trash className="h-4 w-4" />

@@ -50,15 +50,15 @@ export default function ChatInterface() {
               )}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">
+                  <span className="text-sm font-medium text-foreground">
                     {message.role === "agent" ? "GenerativeAgent" : "G5"}
                   </span>
                   <span className="text-sm text-muted-foreground">
                     {message.timestamp}
                   </span>
                 </div>
-                <div className="p-3 bg-muted/50 rounded-lg">
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                <div className="p-3 bg-muted rounded-lg">
+                  <p className="text-sm whitespace-pre-wrap text-foreground">{message.content}</p>
                 </div>
                 {message.role === "agent" && (
                   <div className="flex items-center gap-2">
@@ -81,7 +81,7 @@ export default function ChatInterface() {
           ))}
         </div>
       </ScrollArea>
-      <div className="p-4 border-t">
+      <div className="p-4 border-t border-border">
         <div className="flex gap-2">
           <Textarea
             placeholder="Type a message as a customer"
