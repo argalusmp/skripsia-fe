@@ -25,9 +25,9 @@ export default function AuthenticatedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
-      <main className="pb-10">{children}</main>
+      <main className="flex-1 w-full max-w-full overflow-x-hidden pb-6 sm:pb-10">{children}</main>
     </div>
   )
 } 

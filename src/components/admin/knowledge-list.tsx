@@ -113,50 +113,55 @@ export function KnowledgeList() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'processing':
-        return <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 rounded-full text-xs">Processing</span>
+        return <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 rounded-full text-[10px] sm:text-xs">Processing</span>
       case 'completed':
-        return <span className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-full text-xs">Completed</span>
+        return <span className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-full text-[10px] sm:text-xs">Completed</span>
       case 'failed':
-        return <span className="px-2 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-full text-xs">Failed</span>
+        return <span className="px-2 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-full text-[10px] sm:text-xs">Failed</span>
       default:
-        return <span className="px-2 py-1 bg-muted text-muted-foreground rounded-full text-xs">{status}</span>
+        return <span className="px-2 py-1 bg-muted text-muted-foreground rounded-full text-[10px] sm:text-xs">{status}</span>
     }
   }
 
   return (
-    <div className="p-6 bg-card text-card-foreground rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">Knowledge Base</h2>
-        <Button onClick={fetchKnowledgeItems} disabled={isLoading}>
+    <div className="p-4 sm:p-6 bg-card text-card-foreground rounded-lg shadow-md">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0">
+        <h2 className="text-lg sm:text-xl font-bold">Knowledge Base</h2>
+        <Button 
+          onClick={fetchKnowledgeItems} 
+          disabled={isLoading}
+          size="sm"
+          className="text-xs sm:text-sm"
+        >
           {isLoading ? 'Loading...' : 'Refresh'}
         </Button>
       </div>
 
       {error && (
-        <div className="mb-4 p-4 bg-destructive/10 text-destructive rounded-md">
+        <div className="mb-4 p-3 sm:p-4 bg-destructive/10 text-destructive text-xs sm:text-sm rounded-md">
           {error}
         </div>
       )}
 
       {isLoading ? (
-        <div className="text-center py-8 text-foreground">Loading knowledge items...</div>
+        <div className="text-center py-6 sm:py-8 text-sm sm:text-base text-foreground">Loading knowledge items...</div>
       ) : knowledgeItems.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-center py-6 sm:py-8 text-sm sm:text-base text-muted-foreground">
           No knowledge items found. Add some using the form above.
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {knowledgeItems.map((item) => (
             <div 
               key={item.id} 
-              className="border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors"
+              className="border border-border rounded-lg p-3 sm:p-4 hover:bg-accent/50 transition-colors"
             >
               <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-3">
-                  <div className="text-2xl">{getTypeIcon(item.file_type)}</div>
+                <div className="flex items-start space-x-2 sm:space-x-3">
+                  <div className="text-xl sm:text-2xl">{getTypeIcon(item.file_type)}</div>
                   <div>
-                    <h3 className="font-medium text-foreground">{item.title}</h3>
-                    <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
+                    <h3 className="font-medium text-sm sm:text-base text-foreground truncate max-w-[180px] sm:max-w-md">{item.title}</h3>
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1 sm:mt-2 text-[10px] sm:text-xs text-muted-foreground">
                       <span>Type: {item.file_type}</span>
                       <span>Created: {formatDate(item.created_at)}</span>
                       {getStatusBadge(item.status)}
@@ -165,16 +170,16 @@ export function KnowledgeList() {
                 </div>
                 <Button
                   variant="destructive"
-                  size="sm"
+                  size="xs"
                   onClick={() => handleDeleteKnowledge(item.id, item.title)}
                   disabled={isDeleting === item.id}
-                  className="h-8 w-8 p-0"
+                  className="h-7 w-7 sm:h-8 sm:w-8 p-0 flex-shrink-0"
                   title="Delete knowledge"
                 >
                   {isDeleting === item.id ? (
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    <span className="h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   ) : (
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   )}
                 </Button>
               </div>
@@ -184,21 +189,25 @@ export function KnowledgeList() {
       )}
 
       {total > limit && (
-        <div className="flex justify-between items-center mt-6">
+        <div className="flex justify-between items-center mt-4 sm:mt-6 text-xs sm:text-sm">
           <Button 
             onClick={() => setPage(p => Math.max(0, p - 1))} 
             disabled={page === 0 || isLoading}
             variant="outline"
+            size="sm"
+            className="text-xs"
           >
             Previous
           </Button>
-          <span className="text-sm text-foreground">
+          <span className="text-xs sm:text-sm text-foreground">
             Page {page + 1} of {Math.ceil(total / limit)}
           </span>
           <Button 
             onClick={() => setPage(p => p + 1)} 
             disabled={(page + 1) * limit >= total || isLoading}
             variant="outline"
+            size="sm"
+            className="text-xs"
           >
             Next
           </Button>

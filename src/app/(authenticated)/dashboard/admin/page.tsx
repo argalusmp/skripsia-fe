@@ -27,10 +27,10 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-foreground">Admin Dashboard</h1>
+    <div className="w-full max-w-full px-4 sm:px-6 py-4 sm:py-8">
+      <h1 className="text-xl sm:text-3xl font-bold mb-4 sm:mb-8 text-foreground">Admin Dashboard</h1>
       
-      <div className="grid grid-cols-1 gap-8 mb-8">
+      <div className="grid grid-cols-1 gap-4 sm:gap-8 mb-4 sm:mb-8">
         <KnowledgeUpload />
       </div>
       

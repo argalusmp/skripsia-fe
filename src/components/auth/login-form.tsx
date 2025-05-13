@@ -29,15 +29,15 @@ export function LoginForm() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm border border-red-200 dark:border-red-800">
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-3 py-2 sm:px-4 sm:py-3 rounded-lg text-xs sm:text-sm border border-red-200 dark:border-red-800">
             {error}
           </div>
         )}
         
-        <div className="space-y-2">
-          <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <div className="space-y-1 sm:space-y-2">
+          <label htmlFor="username" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
             Username
           </label>
           <Input
@@ -46,17 +46,17 @@ export function LoginForm() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your username"
-            className="w-full"
+            className="w-full text-sm"
             required
           />
         </div>
         
-        <div className="space-y-2">
+        <div className="space-y-1 sm:space-y-2">
           <div className="flex items-center justify-between">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
               Password
             </label>
-            <a href="#" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+            <a href="#" className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline">
               Forgot password?
             </a>
           </div>
@@ -66,14 +66,14 @@ export function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
-            className="w-full"
+            className="w-full text-sm"
             required
           />
         </div>
 
         <Button 
           type="submit" 
-          className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm"
+          className="w-full py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-xs sm:text-sm"
           disabled={isLoading}
         >
           {isLoading ? 'Signing in...' : 'Sign In'}

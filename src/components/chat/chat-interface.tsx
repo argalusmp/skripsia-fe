@@ -186,11 +186,11 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
   }
 
   return (
-    <div className="flex-1 flex flex-col h-screen bg-background">
+    <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between p-2 sm:p-4 border-b">
         <div className="flex items-center">
-          <h2 className="text-lg font-medium">
+          <h2 className="text-base sm:text-lg font-medium truncate">
             {currentConversationId ? `Ongoing Conversation` : 'New Conversation'}
           </h2>
         </div>
@@ -204,18 +204,18 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
               disabled={isLoading}
               className="text-red-500 hover:text-red-700 hover:bg-red-50"
             >
-              <Trash className="h-4 w-4 mr-2" />
-              Delete Conversation
+              <Trash className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Delete Conversation</span>
             </Button>
           )}
         </div>
       </div>
       
       {/* Chat Area */}
-      <ScrollArea className="flex-1 p-4 overflow-y-auto" ref={scrollAreaRef as any}>
-        <div className="space-y-6 max-w-3xl mx-auto">
+      <ScrollArea className="flex-1 p-2 sm:p-4 overflow-y-auto" ref={scrollAreaRef as any}>
+        <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto">
           {groupedMessages().map((group, groupIndex) => (
-            <div key={groupIndex} className="space-y-4">
+            <div key={groupIndex} className="space-y-3 sm:space-y-4">
               {/* Date Separator */}
               {showDateSeparators && (
                 <div className="flex items-center justify-center">
@@ -231,32 +231,32 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
                 <div
                   key={index}
                   className={cn(
-                    "flex gap-3 max-w-full",
+                    "flex gap-2 sm:gap-3 max-w-full",
                     message.role === "user" ? "justify-end" : "justify-start"
                   )}
                 >
                   {message.role === "assistant" && (
-                    <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center order-1">
-                      <Bot className="h-4 w-4 text-primary" />
+                    <div className="flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary/10 flex items-center justify-center order-1">
+                      <Bot className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                     </div>
                   )}
                   
                   <div className={cn(
-                    "space-y-2 max-w-[85%]",
+                    "space-y-1 sm:space-y-2 max-w-[80%] sm:max-w-[85%]",
                     message.role === "user" ? "order-1" : "order-2"
                   )}>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <span className="text-xs sm:text-sm font-medium">
                         {message.role === "assistant" ? "AI Assistant" : user?.username || "You"}
                       </span>
-                      <span className="text-xs text-muted-foreground flex items-center">
-                        <Clock className="h-3 w-3 mr-1" />
+                      <span className="text-[10px] sm:text-xs text-muted-foreground flex items-center">
+                        <Clock className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />
                         {formatTimestamp(message.created_at)}
                       </span>
                     </div>
                     
                     <div className={cn(
-                      "p-3 rounded-lg whitespace-pre-wrap",
+                      "p-2 sm:p-3 rounded-lg whitespace-pre-wrap text-xs sm:text-sm",
                       message.role === "assistant" 
                         ? "bg-muted/50 text-foreground" 
                         : "bg-primary text-primary-foreground"
@@ -265,23 +265,23 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
                     </div>
                     
                     {message.role === "assistant" && (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 sm:gap-2">
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8" 
+                          className="h-6 w-6 sm:h-8 sm:w-8" 
                           title="Copy to clipboard"
                           onClick={() => copyToClipboard(message.content)}
                         >
-                          <Copy className="h-4 w-4" />
+                          <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
                       </div>
                     )}
                   </div>
                   
                   {message.role === "user" && (
-                    <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary flex items-center justify-center order-2">
-                      <UserCircle className="h-4 w-4 text-primary-foreground" />
+                    <div className="flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary flex items-center justify-center order-2">
+                      <UserCircle className="h-3 w-3 sm:h-4 sm:w-4 text-primary-foreground" />
                     </div>
                   )}
                 </div>
@@ -291,18 +291,18 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
           
           {/* Loading indicator */}
           {isLoading && (
-            <div className="flex gap-3">
-              <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <Bot className="h-4 w-4 text-primary" />
+            <div className="flex gap-2 sm:gap-3">
+              <div className="flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <Bot className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1 sm:space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">AI Assistant</span>
+                  <span className="text-xs sm:text-sm font-medium">AI Assistant</span>
                 </div>
-                <div className="p-3 bg-muted/50 rounded-lg flex items-center space-x-2">
-                  <div className="h-2 w-2 bg-foreground/50 rounded-full animate-bounce"></div>
-                  <div className="h-2 w-2 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="h-2 w-2 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                <div className="p-2 sm:p-3 bg-muted/50 rounded-lg flex items-center space-x-2">
+                  <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-foreground/50 rounded-full animate-bounce"></div>
+                  <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                 </div>
               </div>
             </div>
@@ -311,23 +311,23 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
       </ScrollArea>
       
       {/* Input Area */}
-      <div className="p-4 border-t bg-background sticky bottom-0">
+      <div className="p-2 sm:p-4 border-t bg-background sticky bottom-0">
         <div className="flex gap-2 max-w-3xl mx-auto">
           <Textarea
             placeholder="Type your message here..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="min-h-[44px] max-h-32 resize-none"
+            className="min-h-[44px] max-h-32 resize-none text-sm sm:text-base"
             disabled={isLoading}
           />
           <Button 
             onClick={handleSendMessage} 
             disabled={isLoading || !input.trim()} 
-            className="px-4"
+            className="px-2 sm:px-4 flex-shrink-0"
           >
-            <Send className="h-4 w-4 mr-2" />
-            Send
+            <Send className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Send</span>
           </Button>
         </div>
       </div>

@@ -77,24 +77,24 @@ export function KnowledgeUpload() {
   }
 
   return (
-    <div className="p-6 bg-card text-card-foreground rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-6">Upload Knowledge</h2>
+    <div className="p-4 sm:p-6 bg-card text-card-foreground rounded-lg shadow-md">
+      <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Upload Knowledge</h2>
 
       {error && (
-        <div className="mb-4 p-4 bg-destructive/10 text-destructive rounded-md">
+        <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-destructive/10 text-destructive text-sm rounded-md">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 p-4 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-md">
+        <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-sm rounded-md">
           {success}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium mb-1 text-foreground">
+          <label htmlFor="title" className="block text-xs sm:text-sm font-medium mb-1 text-foreground">
             Title
           </label>
           <Input
@@ -102,12 +102,13 @@ export function KnowledgeUpload() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter knowledge title"
+            className="text-sm"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="file" className="block text-sm font-medium mb-1 text-foreground">
+          <label htmlFor="file" className="block text-xs sm:text-sm font-medium mb-1 text-foreground">
             Upload File (PDF, DOCX, JPG, PNG, MP3, WAV, M4A)
           </label>
           <Input
@@ -115,10 +116,11 @@ export function KnowledgeUpload() {
             type="file"
             onChange={handleFileChange}
             accept=".pdf,.docx,.jpg,.jpeg,.png,.mp3,.wav,.ogg,.m4a"
+            className="text-sm"
             required
           />
           {file && (
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-muted-foreground">
               Selected file: {file.name} ({(file.size / 1024).toFixed(2)} KB)
             </p>
           )}
@@ -126,7 +128,7 @@ export function KnowledgeUpload() {
 
         <Button 
           type="submit" 
-          className="w-full" 
+          className="w-full text-xs sm:text-sm mt-2" 
           disabled={isLoading}
         >
           {isLoading ? 'Uploading...' : 'Upload Knowledge'}
