@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { API_BASE_URL, getAuthHeader } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { Trash2 } from 'lucide-react'
 
 type KnowledgeItem = {
   id: number
@@ -24,6 +25,7 @@ export function KnowledgeList() {
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(0)
   const limit = 10
+  const [isDeleting, setIsDeleting] = useState<number | null>(null)
 
   const fetchKnowledgeItems = async () => {
     setIsLoading(true)
@@ -47,6 +49,39 @@ export function KnowledgeList() {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleDeleteKnowledge = async (id: number, title: string) => {
+    // Show confirmation dialog
+    const isConfirmed = window.confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)
+    
+    if (!isConfirmed) {
+      return
+    }
+    
+    setIsDeleting(id)
+    setError(null)
+
+    try {
+      const headers = getAuthHeader() as Record<string, string>
+      
+      const response = await fetch(`${API_BASE_URL}/knowledge/${id}`, {
+        method: 'DELETE',
+        headers,
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete knowledge item')
+      }
+
+      // Remove deleted item from state to avoid full reload
+      setKnowledgeItems(prevItems => prevItems.filter(item => item.id !== id))
+      setTotal(prevTotal => prevTotal - 1)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete knowledge item')
+    } finally {
+      setIsDeleting(null)
     }
   }
 
@@ -128,6 +163,20 @@ export function KnowledgeList() {
                     </div>
                   </div>
                 </div>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDeleteKnowledge(item.id, item.title)}
+                  disabled={isDeleting === item.id}
+                  className="h-8 w-8 p-0"
+                  title="Delete knowledge"
+                >
+                  {isDeleting === item.id ? (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  ) : (
+                    <Trash2 className="h-4 w-4" />
+                  )}
+                </Button>
               </div>
             </div>
           ))}
