@@ -84,6 +84,20 @@ export function Navigation() {
             Conversations
           </Link>
 
+          {user?.role === 'student' && (
+            <Link 
+              href="/knowledge-sources" 
+              className={`px-3 py-2 rounded-md text-sm flex items-center ${
+                pathname === '/knowledge-sources' 
+                  ? 'bg-primary/10 text-primary' 
+                  : 'hover:bg-accent text-foreground'
+              }`}
+            >
+              <Database className="h-4 w-4 mr-2" />
+              Knowledge Sources
+            </Link>
+          )}
+
           <ThemeToggle />
 
           <div className="border-l border-border pl-4 flex items-center">
@@ -148,6 +162,21 @@ export function Navigation() {
               <MessageSquare className="h-4 w-4 mr-2" />
               Conversations
             </Link>
+            
+            {user?.role === 'student' && (
+              <Link 
+                href="/knowledge-sources" 
+                className={`px-3 py-2 rounded-md text-sm flex items-center ${
+                  pathname === '/knowledge-sources' 
+                    ? 'bg-primary/10 text-primary' 
+                    : 'hover:bg-accent text-foreground'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Database className="h-4 w-4 mr-2" />
+                Knowledge Sources
+              </Link>
+            )}
             
             <div className="flex items-center justify-between pt-2 border-t border-border">
               <div className="flex items-center">

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { API_BASE_URL, getAuthHeader } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Trash2, Eye, Download } from 'lucide-react'
+import { Eye, Download } from 'lucide-react'
 
 type KnowledgeItem = {
   id: number
@@ -20,14 +20,13 @@ type KnowledgeResponse = {
   total: number
 }
 
-export function KnowledgeList() {
+export function KnowledgeSourceList() {
   const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([])
   const [total, setTotal] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(0)
   const limit = 10
-  const [isDeleting, setIsDeleting] = useState<number | null>(null)
   const [isPreviewLoading, setIsPreviewLoading] = useState<number | null>(null)
 
   const fetchKnowledgeItems = async () => {
@@ -52,39 +51,6 @@ export function KnowledgeList() {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  const handleDeleteKnowledge = async (id: number, title: string) => {
-    // Show confirmation dialog
-    const isConfirmed = window.confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)
-    
-    if (!isConfirmed) {
-      return
-    }
-    
-    setIsDeleting(id)
-    setError(null)
-
-    try {
-      const headers = getAuthHeader() as Record<string, string>
-      
-      const response = await fetch(`${API_BASE_URL}/knowledge/${id}`, {
-        method: 'DELETE',
-        headers,
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to delete knowledge item')
-      }
-
-      // Remove deleted item from state to avoid full reload
-      setKnowledgeItems(prevItems => prevItems.filter(item => item.id !== id))
-      setTotal(prevTotal => prevTotal - 1)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete knowledge item')
-    } finally {
-      setIsDeleting(null)
     }
   }
 
@@ -555,7 +521,7 @@ export function KnowledgeList() {
   return (
     <div className="p-4 sm:p-6 bg-card text-card-foreground rounded-lg shadow-md">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0">
-        <h2 className="text-lg sm:text-xl font-bold">Knowledge Base</h2>
+        <h2 className="text-lg sm:text-xl font-bold">Knowledge Sources</h2>
         <Button 
           onClick={fetchKnowledgeItems} 
           disabled={isLoading}
@@ -573,10 +539,10 @@ export function KnowledgeList() {
       )}
 
       {isLoading ? (
-        <div className="text-center py-6 sm:py-8 text-sm sm:text-base text-foreground">Loading knowledge items...</div>
+        <div className="text-center py-6 sm:py-8 text-sm sm:text-base text-foreground">Loading knowledge sources...</div>
       ) : knowledgeItems.length === 0 ? (
         <div className="text-center py-6 sm:py-8 text-sm sm:text-base text-muted-foreground">
-          No knowledge items found. Add some using the form above.
+          No knowledge sources found.
         </div>
       ) : (
         <div className="space-y-3 sm:space-y-4">
@@ -620,20 +586,6 @@ export function KnowledgeList() {
                     title="Download knowledge"
                   >
                     <Download className="h-3 w-3 sm:h-4 sm:w-4" />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="xs"
-                    onClick={() => handleDeleteKnowledge(item.id, item.title)}
-                    disabled={isDeleting === item.id}
-                    className="h-7 w-7 sm:h-8 sm:w-8 p-0 flex-shrink-0"
-                    title="Delete knowledge"
-                  >
-                    {isDeleting === item.id ? (
-                      <span className="h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                    ) : (
-                      <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                    )}
                   </Button>
                 </div>
               </div>

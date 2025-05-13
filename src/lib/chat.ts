@@ -1,10 +1,17 @@
 import { API_BASE_URL, getAuthHeader, handleApiResponse } from './utils'
 
+export type Source = {
+  id: number
+  title: string
+  relevance_score: number
+}
+
 export type Message = {
   id?: number
   role: 'user' | 'assistant'
   content: string
   created_at: string
+  sources?: Source[]
 }
 
 export type Conversation = {

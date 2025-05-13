@@ -4,18 +4,19 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Copy, Send, Trash, Calendar, Clock, UserCircle, Bot } from 'lucide-react'
+import { Copy, Send, Trash, Calendar, Clock, UserCircle, Bot, Database } from 'lucide-react'
 import { cn } from "@/lib/utils"
-import { Message, sendMessage, getConversation, deleteConversation } from "@/lib/chat"
+import { Message, Source, sendMessage, getConversation, deleteConversation } from "@/lib/chat"
 import { useAuth } from "@/lib/auth"
+import { API_BASE_URL, getAuthHeader } from "@/lib/utils"
 
 export default function ChatInterface({ conversation_id }: { conversation_id?: number }) {
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hello! I'm your AI assistant. How may I help you today?",
-      created_at: new Date().toISOString(),
+      content: "Hello! How can I help you today?",
+      created_at: new Date().toISOString()
     }
   ])
   const [isLoading, setIsLoading] = useState(false)
@@ -23,6 +24,7 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
   const { user } = useAuth()
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const [showDateSeparators, setShowDateSeparators] = useState(true)
+  const [expandedSources, setExpandedSources] = useState<number[]>([])
   
   // Fetch conversation if conversation_id is provided
   useEffect(() => {
@@ -53,6 +55,20 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
     }
   }, [messages])
 
+  // Initial message for new chat
+  useEffect(() => {
+    if (!conversation_id) {
+      setMessages([
+        {
+          role: "assistant",
+          content: "Hello! How can I help you today? Ask me any questions and I'll draw from knowledge sources to answer you.",
+          created_at: new Date().toISOString(),
+          sources: [] // Empty sources array to indicate the feature exists
+        }
+      ])
+    }
+  }, [conversation_id])
+
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return
     
@@ -78,7 +94,8 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
         role: "assistant",
         content: response.message.content,
         created_at: response.message.created_at,
-        id: response.message.id
+        id: response.message.id,
+        sources: response.message.sources
       }
       
       setMessages(prev => [...prev, assistantMessage])
@@ -185,6 +202,14 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
     return groups
   }
 
+  const toggleSourceExpansion = (messageId: number) => {
+    setExpandedSources(prev => 
+      prev.includes(messageId) 
+        ? prev.filter(id => id !== messageId) 
+        : [...prev, messageId]
+    )
+  }
+
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] bg-background">
       {/* Header */}
@@ -263,6 +288,35 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
                     )}>
                       {message.content}
                     </div>
+                    
+                    {message.role === "assistant" && message.sources && message.sources.length > 0 && (
+                      <div className="mt-2">
+                        <button 
+                          onClick={() => toggleSourceExpansion(message.id || 0)}
+                          className="flex items-center text-[10px] sm:text-xs text-primary hover:text-primary-dark font-medium"
+                        >
+                          <Database className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                          {expandedSources.includes(message.id || 0) 
+                            ? "Hide sources" 
+                            : `${message.sources.length} sources used`}
+                        </button>
+                        
+                        {expandedSources.includes(message.id || 0) && (
+                          <div className="mt-2 space-y-2 pl-2 border-l-2 border-primary/30">
+                            {message.sources.map((source, idx) => (
+                              <div key={idx} className="flex items-center justify-between bg-muted/30 p-2 rounded-md">
+                                <span className="text-[10px] sm:text-xs truncate max-w-full">
+                                  <strong>{source.title}</strong>
+                                  <span className="ml-1 text-muted-foreground">
+                                    ({Math.round(source.relevance_score * 100)}% match)
+                                  </span>
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                     
                     {message.role === "assistant" && (
                       <div className="flex items-center gap-1 sm:gap-2">
