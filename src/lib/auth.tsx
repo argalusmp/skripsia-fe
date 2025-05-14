@@ -74,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: formData.toString(),
+        credentials: 'include',
       })
       
       const data = await handleApiResponse(response)
