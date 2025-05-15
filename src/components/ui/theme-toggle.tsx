@@ -3,9 +3,19 @@
 import { useTheme } from '@/lib/theme'
 import { Button } from '@/components/ui/button'
 import { Moon, Sun } from 'lucide-react'
+import { useEffect } from 'react'
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme() 
+  const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+
+  useEffect(() => {
+    if (isSystemDark) {
+      setTheme('dark')
+    }else{
+      setTheme('light')
+    }
+  },[]);
 
   return (
     <Button
