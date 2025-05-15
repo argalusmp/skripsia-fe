@@ -5,18 +5,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+// Get the API URL from environment variables
+// In production: https://vidimarpaung.tech
+// In development: http://localhost:8000 (or whatever your local API URL is)
+let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-if (baseUrl.endsWith('/')) {
-  baseUrl = baseUrl.slice(0, -1)
+// Clean up the URL (remove trailing slash)
+if (apiUrl.endsWith('/')) {
+  apiUrl = apiUrl.slice(0, -1)
 }
 
-
-if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
-  baseUrl = `http://${baseUrl}`
-}
-
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+// Export the cleaned API URL
+export const API_BASE_URL = apiUrl
 
 export async function handleApiResponse(response: Response) {
   if (!response.ok) {
