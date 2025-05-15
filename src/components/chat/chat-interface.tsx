@@ -211,7 +211,7 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
   }
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] bg-background">
+    <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-background">
       {/* Header */}
       <div className="flex items-center justify-between p-2 sm:p-4 border-b">
         <div className="flex items-center">
@@ -237,7 +237,7 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
       </div>
       
       {/* Chat Area */}
-      <ScrollArea className="flex-1 p-2 sm:p-4 overflow-y-auto" ref={scrollAreaRef as any}>
+      <div className="flex-1 overflow-y-auto p-2 sm:p-4" ref={scrollAreaRef as any}>
         <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto">
           {groupedMessages().map((group, groupIndex) => (
             <div key={groupIndex} className="space-y-3 sm:space-y-4">
@@ -261,8 +261,8 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
                   )}
                 >
                   {message.role === "assistant" && (
-                    <div className="flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary/10 flex items-center justify-center order-1">
-                      <Bot className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+                    <div className="flex-shrink-0 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary/10 flex items-center justify-center order-1">
+                      <Bot className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                     </div>
                   )}
                   
@@ -271,17 +271,17 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
                     message.role === "user" ? "order-1" : "order-2"
                   )}>
                     <div className="flex items-center gap-1 sm:gap-2">
-                      <span className="text-xs sm:text-sm font-medium">
+                      <span className="text-sm sm:text-base font-medium">
                         {message.role === "assistant" ? "AI Assistant" : user?.username || "You"}
                       </span>
-                      <span className="text-[10px] sm:text-xs text-muted-foreground flex items-center">
-                        <Clock className="h-2 w-2 sm:h-3 sm:w-3 mr-1" />
+                      <span className="text-xs sm:text-sm text-muted-foreground flex items-center">
+                        <Clock className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                         {formatTimestamp(message.created_at)}
                       </span>
                     </div>
                     
                     <div className={cn(
-                      "p-2 sm:p-3 rounded-lg whitespace-pre-wrap text-xs sm:text-sm",
+                      "p-2 sm:p-3 rounded-lg whitespace-pre-wrap text-sm sm:text-base",
                       message.role === "assistant" 
                         ? "bg-muted/50 text-foreground" 
                         : "bg-primary text-primary-foreground"
@@ -293,7 +293,7 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
                       <div className="mt-2">
                         <button 
                           onClick={() => toggleSourceExpansion(message.id || 0)}
-                          className="flex items-center text-[10px] sm:text-xs text-primary hover:text-primary-dark font-medium"
+                          className="flex items-center text-xs sm:text-sm text-primary hover:text-primary-dark font-medium"
                         >
                           <Database className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                           {expandedSources.includes(message.id || 0) 
@@ -305,7 +305,7 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
                           <div className="mt-2 space-y-2 pl-2 border-l-2 border-primary/30">
                             {message.sources.map((source, idx) => (
                               <div key={idx} className="flex items-center justify-between bg-muted/30 p-2 rounded-md">
-                                <span className="text-[10px] sm:text-xs truncate max-w-full">
+                                <span className="text-xs sm:text-sm truncate max-w-full">
                                   <strong>{source.title}</strong>
                                   <span className="ml-1 text-muted-foreground">
                                     ({Math.round(source.relevance_score * 100)}% match)
@@ -323,19 +323,19 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-6 w-6 sm:h-8 sm:w-8" 
+                          className="h-7 w-7 sm:h-8 sm:w-8" 
                           title="Copy to clipboard"
                           onClick={() => copyToClipboard(message.content)}
                         >
-                          <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <Copy className="h-4 w-4 sm:h-5 sm:w-5" />
                         </Button>
                       </div>
                     )}
                   </div>
                   
                   {message.role === "user" && (
-                    <div className="flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary flex items-center justify-center order-2">
-                      <UserCircle className="h-3 w-3 sm:h-4 sm:w-4 text-primary-foreground" />
+                    <div className="flex-shrink-0 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary flex items-center justify-center order-2">
+                      <UserCircle className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
                     </div>
                   )}
                 </div>
@@ -346,41 +346,41 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
           {/* Loading indicator */}
           {isLoading && (
             <div className="flex gap-2 sm:gap-3">
-              <div className="flex-shrink-0 h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <Bot className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+              <div className="flex-shrink-0 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary/10 flex items-center justify-center">
+                <Bot className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
               <div className="space-y-1 sm:space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-medium">AI Assistant</span>
+                  <span className="text-sm sm:text-base font-medium">AI Assistant</span>
                 </div>
                 <div className="p-2 sm:p-3 bg-muted/50 rounded-lg flex items-center space-x-2">
-                  <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-foreground/50 rounded-full animate-bounce"></div>
-                  <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                  <div className="h-2 w-2 sm:h-2.5 sm:w-2.5 bg-foreground/50 rounded-full animate-bounce"></div>
+                  <div className="h-2 w-2 sm:h-2.5 sm:w-2.5 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="h-2 w-2 sm:h-2.5 sm:w-2.5 bg-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                 </div>
               </div>
             </div>
           )}
         </div>
-      </ScrollArea>
+      </div>
       
-      {/* Input Area */}
-      <div className="p-2 sm:p-4 border-t bg-background sticky bottom-0">
+      {/* Input Area - Fixed at bottom */}
+      <div className="p-2 sm:p-4 border-t bg-background">
         <div className="flex gap-2 max-w-3xl mx-auto">
           <Textarea
             placeholder="Type your message here..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="min-h-[44px] max-h-32 resize-none text-sm sm:text-base"
+            className="min-h-[50px] max-h-32 resize-none text-sm sm:text-base"
             disabled={isLoading}
           />
           <Button 
             onClick={handleSendMessage} 
             disabled={isLoading || !input.trim()} 
-            className="px-2 sm:px-4 flex-shrink-0"
+            className="px-3 sm:px-4 flex-shrink-0"
           >
-            <Send className="h-4 w-4 sm:mr-2" />
+            <Send className="h-5 w-5 sm:mr-2" />
             <span className="hidden sm:inline">Send</span>
           </Button>
         </div>

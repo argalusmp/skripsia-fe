@@ -9,7 +9,6 @@ export function RegisterForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [role, setRole] = useState<'admin' | 'student'>('student')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
@@ -27,7 +26,7 @@ export function RegisterForm() {
     }
 
     try {
-      await register(username, email, password, role)
+      await register(username, email, password, 'student')
       router.push('/login')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed')
@@ -102,35 +101,6 @@ export function RegisterForm() {
             className="w-full"
             required
           />
-        </div>
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Select your role
-          </label>
-          <div className="flex gap-4 mt-2">
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                name="role"
-                value="student"
-                checked={role === 'student'}
-                onChange={() => setRole('student')}
-                className="h-4 w-4 text-blue-600 dark:text-blue-500 border-gray-300 dark:border-gray-700 focus:ring-blue-500 dark:focus:ring-blue-400"
-              />
-              <span className="ml-2 text-gray-700 dark:text-gray-300">Student</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input
-                type="radio"
-                name="role"
-                value="admin"
-                checked={role === 'admin'}
-                onChange={() => setRole('admin')}
-                className="h-4 w-4 text-blue-600 dark:text-blue-500 border-gray-300 dark:border-gray-700 focus:ring-blue-500 dark:focus:ring-blue-400"
-              />
-              <span className="ml-2 text-gray-700 dark:text-gray-300">Admin</span>
-            </label>
-          </div>
         </div>
 
         <Button 
