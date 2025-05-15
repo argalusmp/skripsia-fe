@@ -12,9 +12,9 @@ export default function ChatPage() {
 
   return (
     <div className="h-full">
-      <div className="h-full px-2 sm:px-4 py-2 sm:py-4">
-        <h1 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 px-2 sm:px-0">Chat with AI Assistant</h1>
-        <div className="h-[calc(100%-3rem)]">
+      <div className="h-full px-2 sm:px-4 sm:py-4">
+        <h1 className="text-xl sm:text-2xl font-bold px-2 sm:px-0">Chat with AI Assistant</h1>
+        <div className="h-full relative -top-10">
           <ChatInterface />
         </div>
       </div>

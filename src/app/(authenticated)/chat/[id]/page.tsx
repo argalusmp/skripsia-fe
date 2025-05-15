@@ -14,8 +14,8 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="container mx-auto">
-      <div className="py-4 px-4">
+    <div className="container mx-auto h-full">
+      <div className="py-4 px-4 h-full">
         <ChatInterface conversation_id={conversationId} />
       </div>
     </div>
