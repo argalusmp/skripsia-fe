@@ -211,7 +211,7 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
   }
 
   return (
-    <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-background">
+    <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="flex items-center justify-between p-2 sm:p-4 border-b">
         <div className="flex items-center">
@@ -237,7 +237,7 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
       </div>
       
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-2 sm:p-4" ref={scrollAreaRef as any}>
+      <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto">
           {groupedMessages().map((group, groupIndex) => (
             <div key={groupIndex} className="space-y-3 sm:space-y-4">
