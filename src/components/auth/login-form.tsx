@@ -56,9 +56,9 @@ export function LoginForm() {
             <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
               Password
             </label>
-            <a href="#" className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline">
+            {/* <a href="#" className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline">
               Forgot password?
-            </a>
+            </a> */}
           </div>
           <Input
             id="password"
