@@ -88,7 +88,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role: data.role
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed')
+      const errorMessage = err instanceof Error ? err.message : 'Login failed'
+      setError(errorMessage)
       throw err
     } finally {
       setIsLoading(false)

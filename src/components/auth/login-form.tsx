@@ -3,26 +3,73 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth'
+import { API_BASE_URL } from '@/lib/utils'
+import { Eye, EyeOff } from 'lucide-react'
 
 export function LoginForm() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
     setIsLoading(true)
     setError(null)
 
     try {
-      await login(username, password)
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
+
+      const response = await fetch(`${API_BASE_URL}/auth/token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString(),
+        credentials: 'include',
+      })
+      
+      if (!response.ok) {
+        let errorMessage = 'Login failed'
+        
+        try {
+          const errorData = await response.json()
+          
+          if (errorData.detail) {
+            errorMessage = errorData.detail
+          } else if (errorData.message) {
+            errorMessage = errorData.message
+          } else if (response.status === 401) {
+            errorMessage = 'Invalid username or password'
+          }
+        } catch (parseError) {
+          if (response.status === 401) {
+            errorMessage = 'Invalid username or password'
+          }
+        }
+        
+        setError(errorMessage)
+        setIsLoading(false)
+        return
+      }
+      
+      const data = await response.json()
+      localStorage.setItem('token', data.access_token)
+      
+      // Set user state via auth context
+      login(username, password).catch(console.error)
+      
+      setIsLoading(false)
       router.push('/dashboard')
+      
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed')
-    } finally {
+      setError('Network error. Please check your connection and try again.')
       setIsLoading(false)
     }
   }
@@ -52,23 +99,31 @@ export function LoginForm() {
         </div>
         
         <div className="space-y-1 sm:space-y-2">
-          <div className="flex items-center justify-between">
-            <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
-              Password
-            </label>
-            {/* <a href="#" className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline">
-              Forgot password?
-            </a> */}
+          <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+            Password
+          </label>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="w-full text-sm pr-10"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
           </div>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            className="w-full text-sm"
-            required
-          />
         </div>
 
         <Button 

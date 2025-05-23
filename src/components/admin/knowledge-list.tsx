@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { API_BASE_URL, getAuthHeader } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Trash2, Eye, Download } from 'lucide-react'
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 
 type KnowledgeItem = {
   id: number
@@ -29,6 +30,15 @@ export function KnowledgeList() {
   const limit = 10
   const [isDeleting, setIsDeleting] = useState<number | null>(null)
   const [isPreviewLoading, setIsPreviewLoading] = useState<number | null>(null)
+  
+  // Confirmation dialog state
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean
+    item: KnowledgeItem | null
+  }>({
+    isOpen: false,
+    item: null
+  })
 
   const fetchKnowledgeItems = async () => {
     setIsLoading(true)
@@ -55,14 +65,10 @@ export function KnowledgeList() {
     }
   }
 
-  const handleDeleteKnowledge = async (id: number, title: string) => {
-    // Show confirmation dialog
-    const isConfirmed = window.confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)
+  const handleDeleteKnowledge = async () => {
+    if (!deleteConfirmation.item) return
     
-    if (!isConfirmed) {
-      return
-    }
-    
+    const { id } = deleteConfirmation.item
     setIsDeleting(id)
     setError(null)
 
@@ -81,10 +87,23 @@ export function KnowledgeList() {
       // Remove deleted item from state to avoid full reload
       setKnowledgeItems(prevItems => prevItems.filter(item => item.id !== id))
       setTotal(prevTotal => prevTotal - 1)
+      
+      // Close confirmation dialog
+      setDeleteConfirmation({ isOpen: false, item: null })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete knowledge item')
     } finally {
       setIsDeleting(null)
+    }
+  }
+
+  const openDeleteConfirmation = (item: KnowledgeItem) => {
+    setDeleteConfirmation({ isOpen: true, item })
+  }
+
+  const closeDeleteConfirmation = () => {
+    if (!isDeleting) {
+      setDeleteConfirmation({ isOpen: false, item: null })
     }
   }
 
@@ -624,7 +643,7 @@ export function KnowledgeList() {
                   <Button
                     variant="destructive"
                     size="xs"
-                    onClick={() => handleDeleteKnowledge(item.id, item.title)}
+                    onClick={() => openDeleteConfirmation(item)}
                     disabled={isDeleting === item.id}
                     className="h-7 w-7 sm:h-8 sm:w-8 p-0 flex-shrink-0"
                     title="Delete knowledge"
@@ -667,6 +686,18 @@ export function KnowledgeList() {
           </Button>
         </div>
       )}
+
+      <ConfirmationDialog
+        isOpen={deleteConfirmation.isOpen}
+        onClose={closeDeleteConfirmation}
+        onConfirm={handleDeleteKnowledge}
+        title="Confirm Deletion"
+        message={`Are you sure you want to delete "${deleteConfirmation.item?.title}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        isLoading={isDeleting === deleteConfirmation.item?.id}
+      />
     </div>
   )
 } 
