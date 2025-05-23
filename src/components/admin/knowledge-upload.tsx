@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { API_BASE_URL, getAuthHeader } from '@/lib/utils'
 
+const MAX_FILE_SIZE_MB = 20;
+
 export function KnowledgeUpload() {
   const [title, setTitle] = useState('')
   const [file, setFile] = useState<File | null>(null)
@@ -17,6 +19,11 @@ export function KnowledgeUpload() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0]
+      if (selectedFile.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+        setError(`File size should not exceed ${MAX_FILE_SIZE_MB}MB`)
+        setFile(null)
+        return
+      }
       setFile(selectedFile)
       
       // Auto-detect file type
@@ -111,6 +118,7 @@ export function KnowledgeUpload() {
           <label htmlFor="file" className="block text-xs sm:text-sm font-medium mb-1 text-foreground">
             Upload File (PDF, DOCX, JPG, PNG, MP3, WAV, M4A)
           </label>
+          <p className="text-xs sm:text-sm text-muted-foreground mb-1">Maximum file size: 20MB</p>
           <Input
             id="file"
             type="file"
