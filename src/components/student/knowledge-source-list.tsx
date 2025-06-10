@@ -359,22 +359,61 @@ export function KnowledgeSourceList() {
                 <div class="preview-container">
                   ${data.file_type === 'document' && data.file_name.toLowerCase().endsWith('.pdf') 
                     ? `<embed src="${fileUrl}" type="application/pdf" />`
-                    : data.file_type === 'image' 
-                      ? `<img src="${fileUrl}" alt="${data.title}" />`
-                      : data.file_type === 'audio' 
-                        ? `<div style="display:flex; align-items:center; justify-content:center; height:100%;">
-                            <audio controls src="${fileUrl}">Your browser does not support audio playback.</audio>
-                           </div>`
-                        : `<div class="unsupported-message">
-                            <div class="file-icon">📄</div>
-                            <p>Preview is not available for this file type.</p>
-                            <a href="${fileUrl}" download="${data.file_name}" class="download-btn">Download File</a>
-                           </div>`
+                    : data.file_type === 'document' && (data.file_name.toLowerCase().endsWith('.docx') || data.file_name.toLowerCase().endsWith('.doc'))
+                      ? `<div id="docx-preview" style="padding: 1rem; height: 100%; overflow-y: auto; background-color: white; color: black;">
+                          <div style="text-align: center; padding: 2rem;">
+                            <div style="font-size: 1.2rem; margin-bottom: 1rem;">Loading DOCX preview...</div>
+                            <div style="font-size: 0.9rem; color: #666;">Please wait while we process your document</div>
+                          </div>
+                        </div>`
+                      : data.file_type === 'image' 
+                        ? `<img src="${fileUrl}" alt="${data.title}" />`
+                        : data.file_type === 'audio' 
+                          ? `<div style="display:flex; align-items:center; justify-content:center; height:100%;">
+                              <audio controls src="${fileUrl}">Your browser does not support audio playback.</audio>
+                             </div>`
+                          : `<div class="unsupported-message">
+                              <div class="file-icon">📄</div>
+                              <p>Preview is not available for this file type.</p>
+                              <a href="${fileUrl}" download="${data.file_name}" class="download-btn">Download File</a>
+                             </div>`
                   }
                 </div>
               </div>
               
+              <script src="https://unpkg.com/mammoth@1.4.2/mammoth.browser.min.js"></script>
               <script>
+                // Handle DOCX preview
+                async function loadDocxPreview() {
+                  const docxContainer = document.getElementById('docx-preview');
+                  if (docxContainer && '${data.file_name}'.toLowerCase().match(/\\.(docx|doc)$/)) {
+                    try {
+                      const response = await fetch('${fileUrl}');
+                      const arrayBuffer = await response.arrayBuffer();
+                      
+                      const result = await mammoth.convertToHtml({arrayBuffer: arrayBuffer});
+                      docxContainer.innerHTML = \`
+                        <div style="max-width: 800px; margin: 0 auto; padding: 1rem; line-height: 1.6; font-family: 'Times New Roman', serif; background-color: white; color: black;">
+                          \${result.value}
+                        </div>
+                      \`;
+                      
+                      if (result.messages && result.messages.length > 0) {
+                        console.warn('DOCX conversion warnings:', result.messages);
+                      }
+                    } catch (error) {
+                      console.error('Error loading DOCX:', error);
+                      docxContainer.innerHTML = \`
+                        <div style="text-align: center; padding: 2rem;">
+                          <div style="font-size: 1.2rem; margin-bottom: 1rem; color: #dc3545;">Failed to load DOCX preview</div>
+                          <div style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">The document format may not be supported or the file may be corrupted.</div>
+                          <a href="${fileUrl}" download="${data.file_name}" style="display: inline-block; background-color: #4338ca; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-weight: 500;">Download File</a>
+                        </div>
+                      \`;
+                    }
+                  }
+                }
+
                 // Handle window resize for PDF viewers
                 function adjustPdfHeight() {
                   const container = document.querySelector('.preview-container');
@@ -424,10 +463,14 @@ export function KnowledgeSourceList() {
                 }
                 
                 window.addEventListener('resize', handleResize);
-                window.addEventListener('load', handleResize);
+                window.addEventListener('load', function() {
+                  handleResize();
+                  loadDocxPreview();
+                });
                 
                 // Initial run
                 handleResize();
+                loadDocxPreview();
               </script>
             </body>
           </html>
