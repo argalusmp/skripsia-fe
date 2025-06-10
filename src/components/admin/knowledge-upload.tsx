@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { API_BASE_URL, getAuthHeader } from '@/lib/utils'
 
-const MAX_FILE_SIZE_MB = 20;
+const MAX_FILE_SIZE_MB = 10;
 
 export function KnowledgeUpload() {
   const [title, setTitle] = useState('')
@@ -118,7 +118,7 @@ export function KnowledgeUpload() {
           <label htmlFor="file" className="block text-xs sm:text-sm font-medium mb-1 text-foreground">
             Upload File (PDF, DOCX, JPG, PNG, MP3, WAV, M4A)
           </label>
-          <p className="text-xs sm:text-sm text-muted-foreground mb-1">Maximum file size: 20MB</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mb-1">Maximum file size: 10MB</p>
           <Input
             id="file"
             type="file"
