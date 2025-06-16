@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { Message, Source, sendMessage, getConversation, deleteConversation } from "@/lib/chat"
 import { useAuth } from "@/lib/auth"
 import { API_BASE_URL, getAuthHeader } from "@/lib/utils"
+import ReactMarkdown from 'react-markdown'
 
 export default function ChatInterface({ conversation_id }: { conversation_id?: number }) {
   const [input, setInput] = useState("")
@@ -282,12 +283,20 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
                       </div>
 
                       <div className={cn(
-                        "p-2 sm:p-3 rounded-lg whitespace-pre-wrap text-sm sm:text-base",
+                        "p-2 sm:p-3 rounded-lg text-sm sm:text-base",
                         message.role === "assistant"
                           ? "bg-muted/50 text-foreground"
                           : "bg-primary text-primary-foreground"
                       )}>
-                        {message.content}
+                        {message.role === "assistant" ? (
+                          <div className="prose prose-sm max-w-none dark:prose-invert">
+                            <ReactMarkdown>
+                              {message.content}
+                            </ReactMarkdown>
+                          </div>
+                        ) : (
+                          <div className="whitespace-pre-wrap">{message.content}</div>
+                        )}
                       </div>
 
                       {message.role === "assistant" && message.sources && message.sources.length > 0 && (

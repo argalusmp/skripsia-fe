@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Copy, Download, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { cn } from "@/lib/utils"
+import ReactMarkdown from 'react-markdown'
 
 interface Message {
   role: "agent" | "user"
@@ -58,7 +59,11 @@ export default function ChatInterface() {
                   </span>
                 </div>
                 <div className="p-3 bg-muted rounded-lg">
-                  <p className="text-sm whitespace-pre-wrap text-foreground">{message.content}</p>
+                  <div className="prose prose-sm max-w-none dark:prose-invert text-sm text-foreground">
+                    <ReactMarkdown>
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
                 </div>
                 {message.role === "agent" && (
                   <div className="flex items-center gap-2">
