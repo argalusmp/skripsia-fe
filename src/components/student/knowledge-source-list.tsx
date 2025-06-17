@@ -366,17 +366,24 @@ export function KnowledgeSourceList() {
                             <div style="font-size: 0.9rem; color: #666;">Please wait while we process your document</div>
                           </div>
                         </div>`
-                      : data.file_type === 'image' 
-                        ? `<img src="${fileUrl}" alt="${data.title}" />`
-                        : data.file_type === 'audio' 
-                          ? `<div style="display:flex; align-items:center; justify-content:center; height:100%;">
-                              <audio controls src="${fileUrl}">Your browser does not support audio playback.</audio>
-                             </div>`
-                          : `<div class="unsupported-message">
-                              <div class="file-icon">📄</div>
-                              <p>Preview is not available for this file type.</p>
-                              <a href="${fileUrl}" download="${data.file_name}" class="download-btn">Download File</a>
-                             </div>`
+                      : data.file_type === 'document' && data.file_name.toLowerCase().endsWith('.txt')
+                        ? `<div id="txt-preview" style="padding: 1rem; height: 100%; overflow-y: auto; background-color: white; color: black;">
+                            <div style="text-align: center; padding: 2rem;">
+                              <div style="font-size: 1.2rem; margin-bottom: 1rem;">Loading TXT preview...</div>
+                              <div style="font-size: 0.9rem; color: #666;">Please wait while we load your text file</div>
+                            </div>
+                          </div>`
+                        : data.file_type === 'image' 
+                          ? `<img src="${fileUrl}" alt="${data.title}" />`
+                          : data.file_type === 'audio' 
+                            ? `<div style="display:flex; align-items:center; justify-content:center; height:100%;">
+                                <audio controls src="${fileUrl}">Your browser does not support audio playback.</audio>
+                               </div>`
+                            : `<div class="unsupported-message">
+                                <div class="file-icon">📄</div>
+                                <p>Preview is not available for this file type.</p>
+                                <a href="${fileUrl}" download="${data.file_name}" class="download-btn">Download File</a>
+                               </div>`
                   }
                 </div>
               </div>
@@ -407,6 +414,32 @@ export function KnowledgeSourceList() {
                         <div style="text-align: center; padding: 2rem;">
                           <div style="font-size: 1.2rem; margin-bottom: 1rem; color: #dc3545;">Failed to load DOCX preview</div>
                           <div style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">The document format may not be supported or the file may be corrupted.</div>
+                          <a href="${fileUrl}" download="${data.file_name}" style="display: inline-block; background-color: #4338ca; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-weight: 500;">Download File</a>
+                        </div>
+                      \`;
+                    }
+                  }
+                }
+
+                // Handle TXT preview
+                async function loadTxtPreview() {
+                  const txtContainer = document.getElementById('txt-preview');
+                  if (txtContainer && '${data.file_name}'.toLowerCase().endsWith('.txt')) {
+                    try {
+                      const response = await fetch('${fileUrl}');
+                      const text = await response.text();
+                      
+                      txtContainer.innerHTML = \`
+                        <div style="max-width: 800px; margin: 0 auto; padding: 1rem; font-family: 'Courier New', monospace; white-space: pre-wrap; line-height: 1.5; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; color: black;">
+                          \${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                        </div>
+                      \`;
+                    } catch (error) {
+                      console.error('Error loading TXT:', error);
+                      txtContainer.innerHTML = \`
+                        <div style="text-align: center; padding: 2rem;">
+                          <div style="font-size: 1.2rem; margin-bottom: 1rem; color: #dc3545;">Failed to load TXT preview</div>
+                          <div style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">The text file may not be accessible or the file may be corrupted.</div>
                           <a href="${fileUrl}" download="${data.file_name}" style="display: inline-block; background-color: #4338ca; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-weight: 500;">Download File</a>
                         </div>
                       \`;
@@ -466,11 +499,13 @@ export function KnowledgeSourceList() {
                 window.addEventListener('load', function() {
                   handleResize();
                   loadDocxPreview();
+                  loadTxtPreview();
                 });
                 
                 // Initial run
                 handleResize();
                 loadDocxPreview();
+                loadTxtPreview();
               </script>
             </body>
           </html>

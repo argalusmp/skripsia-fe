@@ -116,14 +116,14 @@ export function KnowledgeUpload() {
 
         <div>
           <label htmlFor="file" className="block text-xs sm:text-sm font-medium mb-1 text-foreground">
-            Upload File (PDF, DOCX, JPG, PNG, MP3, WAV, M4A)
+            Upload File (PDF, DOCX, TXT, JPG/JPEG, PNG, Audio)
           </label>
           <p className="text-xs sm:text-sm text-muted-foreground mb-1">Maximum file size: 10MB</p>
           <Input
             id="file"
             type="file"
             onChange={handleFileChange}
-            accept=".pdf,.docx,.jpg,.jpeg,.png,.mp3,.wav,.ogg,.m4a"
+            accept=".pdf,.docx,.txt,.jpg,.jpeg,.png,.mp3,.wav,.ogg,.m4a"
             className="text-sm"
             required
           />
