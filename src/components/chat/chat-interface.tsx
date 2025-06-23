@@ -11,6 +11,40 @@ import { useAuth } from "@/lib/auth"
 import { API_BASE_URL, getAuthHeader } from "@/lib/utils"
 import ReactMarkdown from 'react-markdown'
 
+// Function to replace math symbols in text
+const replaceMathSymbols = (text: string): string => {
+  // Handle common LaTeX math symbols
+  return text
+    // Greater than or equal to
+    .replace(/\$\\geq ([0-9]+)\$/g, '≥ $1')
+    .replace(/\$≥ ([0-9]+)\$/g, '≥ $1')
+    // Less than or equal to
+    .replace(/\$\\leq ([0-9]+)\$/g, '≤ $1')
+    .replace(/\$≤ ([0-9]+)\$/g, '≤ $1')
+    // Not equal to
+    .replace(/\$\\neq\$/g, '≠')
+    .replace(/\$≠\$/g, '≠')
+    // Approximately equal to
+    .replace(/\$\\approx\$/g, '≈')
+    .replace(/\$≈\$/g, '≈')
+    // Multiplication symbol
+    .replace(/\$\\times\$/g, '×')
+    .replace(/\$×\$/g, '×')
+    // Division symbol
+    .replace(/\$\\div\$/g, '÷')
+    .replace(/\$÷\$/g, '÷')
+    // Square root
+    .replace(/\$\\sqrt\{([^}]+)\}\$/g, '√($1)')
+    // Fractions
+    .replace(/\$\\frac\{([^}]+)\}\{([^}]+)\}\$/g, '$1/$2')
+    // Superscript/exponents
+    .replace(/\$([a-zA-Z0-9]+)\^([a-zA-Z0-9]+)\$/g, '$1<sup>$2</sup>')
+    // Subscript
+    .replace(/\$([a-zA-Z0-9]+)_([a-zA-Z0-9]+)\$/g, '$1<sub>$2</sub>')
+    // General math delimiters
+    .replace(/\$([^$]+)\$/g, '$1');
+};
+
 export default function ChatInterface({ conversation_id }: { conversation_id?: number }) {
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState<Message[]>([
@@ -291,7 +325,7 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
                         {message.role === "assistant" ? (
                           <div className="prose prose-sm max-w-none dark:prose-invert">
                             <ReactMarkdown>
-                              {message.content}
+                              {replaceMathSymbols(message.content)}
                             </ReactMarkdown>
                           </div>
                         ) : (
