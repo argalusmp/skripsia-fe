@@ -96,7 +96,7 @@ export default function ChatInterface({ conversation_id }: { conversation_id?: n
       setMessages([
         {
           role: "assistant",
-          content: "Hello! How can I help you today? Ask me any questions and I'll draw from knowledge sources to answer you.",
+          content: "Hai Bro/Sis! Tanyakan saya terkait Skripsi-mu? saya akan bantu kamu berdasarkan sumber yang ada.",
           created_at: new Date().toISOString(),
           sources: [] // Empty sources array to indicate the feature exists
         }
